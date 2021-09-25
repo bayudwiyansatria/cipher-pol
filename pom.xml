@@ -139,6 +139,7 @@
     <gpg.useagent>true</gpg.useagent>
     <arguments />
     <!-- Additional Properties -->
+    <bouncycastle.version>1.54</bouncycastle.version>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -147,6 +148,11 @@
         <artifactId>junit</artifactId>
         <version>4.13.2</version>
       </dependency>
+      <dependency>
+        <groupId>org.bouncycastle</groupId>
+        <artifactId>bcpkix-jdk15on</artifactId>
+        <version>${bouncycastle.version}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
   <dependencies>
@@ -154,6 +160,10 @@
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.bouncycastle</groupId>
+      <artifactId>bcpkix-jdk15on</artifactId>
     </dependency>
   </dependencies>
   <build>

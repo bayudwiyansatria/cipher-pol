@@ -58,13 +58,32 @@ public enum KeyUsages {
     /**
      * Certificate Key Usages
      *
-     * @param jcaName JCA Name
+     * @param jcaName     JCA Name
      * @param description Description
-     *
+     * @since 0.0.1
      */
     KeyUsages(String jcaName, String description) {
         this.jcaName = jcaName;
         this.description = description;
     }
 
+    /**
+     * Get Java Cryptography Architecture Name
+     *
+     * @return String
+     * @since 0.0.1
+     */
+    public String getJcaName() {
+        return jcaName;
+    }
+
+    /**
+     * Get Key Usage Description
+     *
+     * @return Description
+     * @since 0.0.1
+     */
+    public String getDescription() {
+        return description;
+    }
 }

@@ -12,12 +12,8 @@ import java.security.SecureRandom;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.spec.ECParameterSpec;
-import java.security.spec.ECPoint;
-import java.security.spec.ECPrivateKeySpec;
 import java.security.spec.ECPublicKeySpec;
-import java.security.spec.EllipticCurve;
 import java.security.spec.InvalidKeySpecException;
-import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 
 /**
@@ -26,22 +22,20 @@ import java.security.spec.RSAPublicKeySpec;
  * @author Bayu Dwiyan Satria
  * @version 0.0.1
  */
-class KeyBuilder {
+public class KeyBuilder {
 
-    private Encryption encryption;
+    private final Encryption encryption;
     private SecurityProvider provider;
 
     /**
-     * Set KeyPair Encryption
+     * Key Builder Constructor
      *
-     * @param encryption Encryption of Key i.e RSA
-     * @return KeyBuilder
+     * @param encryption Encryption Family
      * @see Encryption
      * @since 0.0.1
      */
-    public KeyBuilder setEncryption(Encryption encryption) {
+    public KeyBuilder(Encryption encryption) {
         this.encryption = encryption;
-        return this;
     }
 
     /**
@@ -83,8 +77,8 @@ class KeyBuilder {
 
     /**
      * Build Key Pair
-     * @param privateKey Existing Private Key
      *
+     * @param privateKey Existing Private Key
      * @return KeyPair
      * @see KeyPair
      * @since 0.0.1
