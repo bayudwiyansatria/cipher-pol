@@ -137,6 +137,7 @@
     <assembly.tarLongFileMode>posix</assembly.tarLongFileMode>
     <gpg.executable>gpg</gpg.executable>
     <gpg.useagent>true</gpg.useagent>
+    <gpg.skip>true</gpg.skip>
     <arguments />
     <!-- Additional Properties -->
     <bouncycastle.version>1.54</bouncycastle.version>
@@ -266,9 +267,6 @@
           <execution>
             <id>sign-release-artifacts</id>
             <phase>verify</phase>
-            <goals>
-              <goal>sign</goal>
-            </goals>
           </execution>
         </executions>
       </plugin>
