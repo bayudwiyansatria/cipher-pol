@@ -7,23 +7,20 @@ package com.bayudwiyansatria.common.security;
  * @version 0.0.1
  */
 public enum Encryption {
-    NONE("NONE", 0),
-    RSA2048("RSA", 2048),
-    RSA4096("RSA", 4096),
-    EC256("EC", 256),
-    EC512("EC", 512);
+    
+    RSA("RSA"),
+
+    EC("EC");
 
     private final String encryption;
-    private final int length;
 
     /**
      * Encryption
      *
      * @param encryption Encryption
      */
-    Encryption(String encryption, int length) {
+    Encryption(String encryption) {
         this.encryption = encryption;
-        this.length = length;
     }
 
     /**
@@ -33,14 +30,5 @@ public enum Encryption {
      */
     public String getEncryption() {
         return encryption;
-    }
-
-    /**
-     * Get Encryption Key Length
-     *
-     * @return encryption
-     */
-    public int getLength() {
-        return length;
     }
 }

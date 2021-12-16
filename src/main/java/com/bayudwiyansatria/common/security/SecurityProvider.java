@@ -1,5 +1,8 @@
 package com.bayudwiyansatria.common.security;
 
+import java.security.Security;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+
 /**
  * Security Provider
  *
@@ -8,18 +11,14 @@ package com.bayudwiyansatria.common.security;
  */
 public enum SecurityProvider {
     /**
-     * SUN Provider
-     */
-    SUN("SUN"),
-
-    /**
      * Bounce Castle Provider
      */
-    BC("BouncyCastle");
+    BC(BouncyCastleProvider.PROVIDER_NAME);
 
     private final String provider;
 
     SecurityProvider(String provider) {
+        Security.addProvider(new BouncyCastleProvider());
         this.provider = provider;
     }
 

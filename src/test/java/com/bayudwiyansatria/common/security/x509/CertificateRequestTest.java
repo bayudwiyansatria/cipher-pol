@@ -24,7 +24,7 @@ public class CertificateRequestTest {
             .setStateOrProvinceName("East Java")
             .build();
 
-        KeyPair keyPair = new KeyBuilder(Encryption.RSA2048).build();
+        KeyPair keyPair = new KeyBuilder().build();
         Signer signer = new Signer(SignatureAlgorithm.RS512, keyPair.getPrivate());
 
         CertificateRequest csr = new CertificateRequestBuilder(signer)

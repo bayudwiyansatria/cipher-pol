@@ -1,6 +1,7 @@
 package com.bayudwiyansatria.common.security;
 
-import java.math.BigInteger;
+import com.bayudwiyansatria.common.security.key.ecc.ECKeyBuilder;
+import com.bayudwiyansatria.common.security.key.rsa.RSAKeyBuilder;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -8,13 +9,11 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.SecureRandom;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.RSAPrivateKey;
-import java.security.spec.ECParameterSpec;
-import java.security.spec.ECPublicKeySpec;
 import java.security.spec.InvalidKeySpecException;
-import java.security.spec.RSAPublicKeySpec;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 
 /**
  * Key Builder Implementation
@@ -22,20 +21,31 @@ import java.security.spec.RSAPublicKeySpec;
  * @author Bayu Dwiyan Satria
  * @version 0.0.1
  */
-public class KeyBuilder {
+public class KeyBuilder extends RSAKeyBuilder {
 
-    private final Encryption encryption;
-    private SecurityProvider provider;
+    private Encryption encryption = Encryption.RSA;
+    private SecurityProvider provider = SecurityProvider.BC;
+    private int keySize = 2048;
 
     /**
      * Key Builder Constructor
      *
-     * @param encryption Encryption Family
+     * @since 0.0.1
+     */
+    public KeyBuilder() {
+    }
+
+    /**
+     * Set Encryption
+     *
+     * @param encryption encryption
+     * @return KeyBuilder
      * @see Encryption
      * @since 0.0.1
      */
-    public KeyBuilder(Encryption encryption) {
+    public KeyBuilder setEncryption(Encryption encryption) {
         this.encryption = encryption;
+        return this;
     }
 
     /**
@@ -52,6 +62,18 @@ public class KeyBuilder {
     }
 
     /**
+     * Set Key Size
+     *
+     * @param keySize keySize
+     * @return KeyBuilder
+     * @since 0.0.1
+     */
+    public KeyBuilder setSize(int keySize) {
+        this.keySize = keySize;
+        return this;
+    }
+
+    /**
      * Build Key Pair
      *
      * @return KeyPair
@@ -59,17 +81,13 @@ public class KeyBuilder {
      * @since 0.0.1
      */
     public KeyPair build() {
-        if (this.provider == null) {
-            this.provider = SecurityProvider.SUN;
-        }
         try {
             KeyPairGenerator keyPairGenerator = KeyPairGenerator
-                .getInstance(encryption.getEncryption());
-            SecureRandom random = SecureRandom
-                .getInstance("SHA1PRNG", String.valueOf(this.provider));
-            keyPairGenerator.initialize(this.encryption.getLength(), random);
-            return keyPairGenerator.generateKeyPair();
-        } catch (NoSuchProviderException | NoSuchAlgorithmException e) {
+                .getInstance(this.encryption.getEncryption(), provider.getProvider());
+            keyPairGenerator.initialize(this.keySize);
+            KeyPair keyPair = keyPairGenerator.generateKeyPair();
+            return this.build(keyPair.getPrivate());
+        } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
             e.printStackTrace();
         }
         return null;
@@ -84,25 +102,35 @@ public class KeyBuilder {
      * @since 0.0.1
      */
     public KeyPair build(PrivateKey privateKey) {
+        if (encryption.getEncryption().equals("RSA")) {
+            return new RSAKeyBuilder().build((RSAPrivateKey) privateKey);
+        } else if (encryption.getEncryption().equals("EC")) {
+            return new ECKeyBuilder().build((ECPrivateKey) privateKey);
+        }
+        return null;
+    }
+
+    /**
+     * Build KeyPair from Existing Encoded PrivateKey
+     *
+     * @param keyType    Key Type i.e RSA, ECC
+     * @param privateKey Encoded PrivateKey
+     * @return KeyPair
+     * @since 0.0.1
+     */
+    public KeyPair build(String keyType, byte[] privateKey) {
         try {
-            KeyFactory keyFactory = KeyFactory.getInstance(encryption.getEncryption());
-            System.out.println(encryption.getEncryption());
-            if (encryption.getEncryption().equals("RSA")) {
-                RSAPrivateKey privateKeyFactory = (RSAPrivateKey) privateKey;
-                RSAPublicKeySpec keySpec = new RSAPublicKeySpec(privateKeyFactory.getModulus(),
-                    BigInteger.valueOf(65537));
-                PublicKey publicKey = keyFactory.generatePublic(keySpec);
-                return new KeyPair(publicKey, privateKey);
-            } else if (encryption.getEncryption().equals("EC")) {
-                ECPrivateKey privateKeyFactory = (ECPrivateKey) privateKey;
-                ECParameterSpec parameter = privateKeyFactory.getParams();
-                ECPublicKeySpec keySpec = new ECPublicKeySpec(parameter.getGenerator(), parameter);
-                PublicKey publicKey = keyFactory.generatePublic(keySpec);
-                return new KeyPair(publicKey, privateKey);
-            }
+            KeyFactory keyFactory = KeyFactory.getInstance(keyType);
+            PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(privateKey);
+            PublicKey publicKey = keyFactory.generatePublic(new X509EncodedKeySpec(privateKey));
+            return new KeyPair(
+                publicKey,
+                keyFactory.generatePrivate(keySpec)
+            );
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             e.printStackTrace();
         }
         return null;
     }
 }
+

@@ -1,15 +1,16 @@
 package com.bayudwiyansatria.common.security.utils;
 
-import com.bayudwiyansatria.common.security.x509.Certificate;
-import com.bayudwiyansatria.common.security.x509.CertificateRequest;
+import com.bayudwiyansatria.common.security.Digest;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.security.cert.X509Certificate;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
+import java.util.Locale;
 import org.bouncycastle.openssl.jcajce.JcaPEMWriter;
-import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 
 /**
- * X5009 Utility
+ * Security Utils
  *
  * @author Bayu Dwiyan Satria
  * @version 0.0.1
@@ -17,29 +18,16 @@ import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 public class SecurityUtils {
 
     /**
-     * Get Certificate in PEM Format
+     * WriteObject To PEM Format
      *
-     * @param certificateRequest Certificate Request
-     * @return PEM Format
-     * @see CertificateRequest
+     * @param object Object
+     * @return String PEM Format
      * @since 0.0.1
      */
-    public String writeToPem(CertificateRequest certificateRequest) {
-        return this.writeToPem(certificateRequest.getPKCS10CertificationRequest());
-    }
-
-    /**
-     * Get Certificate in PEM Format
-     *
-     * @param certificateRequest Certificate Request
-     * @return PEM Format
-     * @see PKCS10CertificationRequest
-     * @since 0.0.1
-     */
-    public String writeToPem(PKCS10CertificationRequest certificateRequest) {
+    public String writeToPem(Object object) {
         StringWriter sw = new StringWriter();
         try (JcaPEMWriter writer = new JcaPEMWriter(sw)) {
-            writer.writeObject(certificateRequest);
+            writer.writeObject(object);
             writer.flush();
             return sw.toString();
         } catch (IOException e) {
@@ -49,34 +37,36 @@ public class SecurityUtils {
     }
 
     /**
-     * Get Certificate in PEM Format
+     * Get Message Digest
      *
-     * @param certificate Certificate
-     * @return PEM Format
-     * @see Certificate
+     * @param publicKey PublicKey
+     * @return String Message Digest
      * @since 0.0.1
      */
-    public String writeToPem(Certificate certificate) {
-        return this.writeToPem(certificate.getX509Certificate());
-    }
-
-    /**
-     * Get Certificate in PEM Format
-     *
-     * @param certificate Certificate
-     * @return PEM Format
-     * @see Certificate
-     * @since 0.0.1
-     */
-    public String writeToPem(X509Certificate certificate) {
-        StringWriter sw = new StringWriter();
-        try (JcaPEMWriter writer = new JcaPEMWriter(sw)) {
-            writer.writeObject(certificate);
-            writer.flush();
-            return sw.toString();
-        } catch (IOException e) {
+    public String getMessageDigest(PublicKey publicKey) {
+        try {
+            MessageDigest messageDigest =
+                MessageDigest.getInstance(Digest.SHA256.getDigest());
+            messageDigest.update(publicKey.getEncoded());
+            return this.byteToHex(messageDigest.digest());
+        } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
         return null;
+    }
+
+    /**
+     * byteToHex
+     *
+     * @param bytes byteArray to Hex
+     * @return String Hex
+     * @since 0.0.1
+     */
+    private String byteToHex(byte[] bytes) {
+        StringBuilder hexString = new StringBuilder(bytes.length * 2);
+        for (byte b : bytes) {
+            hexString.append(String.format("%02x", b));
+        }
+        return hexString.toString().toUpperCase(Locale.ROOT);
     }
 }
