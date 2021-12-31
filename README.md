@@ -29,8 +29,8 @@ Say what the step will be clone this repository.
 ```xml
 <dependency>
   <groupId>com.bayudwiyansatria</groupId>
-  <artifactId>shiryu</artifactId>
-  <version>${shiryu.version}</version>
+  <artifactId>cipher-pol</artifactId>
+  <version>${cipher-pol.version}</version>
 </dependency>
 ```
 
