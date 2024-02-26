@@ -14,109 +14,24 @@ on:
         description: 'Incremental Version'
         required: true
         default: '0'
-env:
-  tag_name: ${{ github.event.inputs.major-version }}.${{ github.event.inputs.minor-version }}.${{ github.event.inputs.incremental-version }}
 jobs:
   build:
     name: Build
-    runs-on: ${{ matrix.operating-system }}
-    strategy:
-      matrix:
-        java-version: [ 11.0.3 ]
-        operating-system: [ ubuntu-latest ]
-    steps:
-    - name: Prepare
-      uses: actions/checkout@v2
-    - name: Set Up Java Development Kit
-      uses: actions/setup-java@v2
-      with:
-        java-version: ${{ matrix.java-version }}
-        distribution: adopt
-        cache: maven
-    - name: Maven clean test package
-      run: >-
-        mvn
-        --no-transfer-progress
-        --settings settings.xml
-        --file pom.xml
-        clean
-        test
-        package
-      env:
-        MAVEN_USERNAME: ${{ github.event.repository.owner.login }}
-        MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
-    - name: Archive artifacts
-      uses: actions/upload-artifact@v2
-      with:
-        name: target
-        path: target
-        retention-days: 1
+    uses: bayudwiyansatria/.github/.github/workflows/build-java-maven.yaml@master
+    with:
+      JAVA_VERSION: 11
+    secrets:
+      MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
+      MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
   deploy:
     name: Deploy
+    uses: bayudwiyansatria/.github/.github/workflows/relase-maven.yaml@master
     needs: build
-    runs-on: ${{ matrix.operating-system }}
-    strategy:
-      matrix:
-        java-version: [ 11.0.3 ]
-        operating-system: [ ubuntu-latest ]
-    steps:
-    - name: Check out the repo
-      uses: actions/checkout@v2
-    - name: Download artifacts
-      uses: actions/download-artifact@v2
-      with:
-        name: target
-        path: target
-    - name: Set Up Java Development Kit
-      uses: actions/setup-java@v2
-      with:
-        java-version: ${{ matrix.java-version }}
-        distribution: adopt
-        cache: maven
-    - name: Configure Git user
-      run: |
-        git config user.email "actions@github.com"
-        git config user.name "GitHub Actions"
-    - name: Prepare Deployment
-      run: >-
-        mvn
-        --no-transfer-progress
-        --settings settings.xml
-        build-helper:parse-version
-        versions:set -DnewVersion=\${{ env.tag_name }}-SNAPSHOT
-        versions:commit
-      env:
-        MAVEN_USERNAME: ${{ github.event.repository.owner.login }}
-        MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
-    - name: Deployment
-      run: >-
-        mvn
-        --batch-mode
-        --no-transfer-progress
-        --settings settings.xml
-        --file pom.xml
-        deploy
-      env:
-        MAVEN_USERNAME: ${{ github.event.repository.owner.login }}
-        MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
-    - name: Git
-      run: |
-        git add .
-        git commit -m "Release ${{ env.tag_name }}"
-        git tag ${{ env.tag_name }}
-        git push origin ${{ env.tag_name }}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    - name: Create Release
-      uses: actions/create-release@v1
-      with:
-        tag_name: ${{ env.tag_name }}
-        release_name: Release ${{ env.tag_name }}
-        body: |
-          Changes in this Release
-          - First Change
-          - Second Change
-        draft: false
-        prerelease: true
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    with:
+      JAVA_VERSION: 11
+      MAJOR_VERSION: ${{ github.event.inputs.major-version }}
+      MINOR_VERSION: ${{ github.event.inputs.minor-version }}
+      INCREMENTAL_VERSION: ${{ github.event.inputs.incremental-version }}
+    secrets:
+      MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
+      MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
