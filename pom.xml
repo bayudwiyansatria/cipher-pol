@@ -142,7 +142,8 @@
     <!-- Additional Properties -->
     <bayudwiyansatria-common.version>1.0.0</bayudwiyansatria-common.version>
     <junit.version>4.13.2</junit.version>
-    <bouncycastle.version>1.69</bouncycastle.version>
+    <bouncycastle-bcpkix.version>2.73.4</bouncycastle-bcpkix.version>
+    <bouncycastle-bcprov.version>1.77</bouncycastle-bcprov.version>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -154,8 +155,13 @@
       </dependency>
       <dependency>
         <groupId>org.bouncycastle</groupId>
-        <artifactId>bcpkix-jdk15on</artifactId>
-        <version>${bouncycastle.version}</version>
+        <artifactId>bcpkix-lts8on</artifactId>
+        <version>${bouncycastle-bcpkix.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.bouncycastle</groupId>
+        <artifactId>bcprov-jdk18on</artifactId>
+        <version>${bouncycastle-bcprov.version}</version>
       </dependency>
       <dependency>
         <groupId>com.bayudwiyansatria.common</groupId>
@@ -175,7 +181,11 @@
     </dependency>
     <dependency>
       <groupId>org.bouncycastle</groupId>
-      <artifactId>bcpkix-jdk15on</artifactId>
+      <artifactId>bcpkix-lts8on</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.bouncycastle</groupId>
+      <artifactId>bcprov-jdk18on</artifactId>
     </dependency>
   </dependencies>
   <build>

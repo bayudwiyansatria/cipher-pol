@@ -2,8 +2,8 @@ package com.bayudwiyansatria.security.utils;
 
 import com.bayudwiyansatria.common.Utils;
 import com.bayudwiyansatria.common.security.Digest;
-import com.bayudwiyansatria.common.security.pem.PEMReader;
-import com.bayudwiyansatria.common.security.pem.PEMWriter;
+import com.bayudwiyansatria.security.utils.pem.PEMReader;
+import com.bayudwiyansatria.security.utils.pem.PEMWriter;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
