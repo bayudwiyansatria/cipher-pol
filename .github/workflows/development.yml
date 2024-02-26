@@ -23,6 +23,7 @@ jobs:
     needs: build
     with:
       JAVA_VERSION: 11
+      ENVIRONMENT: development
     secrets:
       MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
       MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
