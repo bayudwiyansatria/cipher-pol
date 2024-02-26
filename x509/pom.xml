@@ -5,13 +5,11 @@
   <parent>
     <artifactId>cipher-pol</artifactId>
     <groupId>com.bayudwiyansatria</groupId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.1-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-
   <groupId>com.bayudwiyansatria.security</groupId>
   <artifactId>x509</artifactId>
-
   <name>Security X509</name>
   <properties>
     <maven.compiler.source>11</maven.compiler.source>
