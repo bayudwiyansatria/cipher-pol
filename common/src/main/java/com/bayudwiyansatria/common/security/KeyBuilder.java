@@ -2,6 +2,8 @@ package com.bayudwiyansatria.common.security;
 
 import com.bayudwiyansatria.common.security.key.ecc.ECKeyBuilder;
 import com.bayudwiyansatria.common.security.key.rsa.RSAKeyBuilder;
+import com.bayudwiyansatria.security.utils.SecurityUtils;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -14,6 +16,9 @@ import java.security.interfaces.RSAPrivateKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.Base64;
+import org.bouncycastle.openssl.PEMKeyPair;
+import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 
 /**
  * Key Builder Implementation
@@ -149,6 +154,31 @@ public class KeyBuilder {
             return new RSAKeyBuilder().build((RSAPrivateKey) privateKey);
         } else if (encryption.getEncryption().equals("EC")) {
             return new ECKeyBuilder().build((ECPrivateKey) privateKey);
+        }
+        return null;
+    }
+
+    /**
+     * Get Key Pair from PEM Bas64
+     *
+     * @param base64 Key Pem File
+     * @return KeyPair
+     */
+    public KeyPair build(String base64) {
+        String PEM = new String(
+            Base64
+                .getDecoder()
+                .decode(base64),
+            StandardCharsets.UTF_8
+        );
+        PEMKeyPair PEMReader = (PEMKeyPair) new SecurityUtils().readToPem(PEM);
+        JcaPEMKeyConverter converter = new JcaPEMKeyConverter();
+        try {
+            return new KeyBuilder(
+                converter.getPrivateKey(PEMReader.getPrivateKeyInfo())
+            ).build();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return null;
     }
