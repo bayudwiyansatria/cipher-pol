@@ -14,18 +14,53 @@ on:
         description: 'Incremental Version'
         required: true
         default: '0'
-env:
-  versions: \${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.nextIncrementalVersion}-SNAPSHOT
+permissions:
+  actions: write
+  contents: write
+  pages: write
+  id-token: write
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
 jobs:
-  release:
-    name: Release
-    uses: bayudwiyansatria/.github/.github/workflows/relase-github.yaml@master
+  build:
+    name: Build
+    uses: bayudwiyansatria/.github/.github/workflows/build-java-maven.yaml@master
     with:
       JAVA_VERSION: 11
-      MAJOR_VERSION: ${{ github.event.inputs.major-version }}
-      MINOR_VERSION: ${{ github.event.inputs.minor-version }}
-      INCREMENTAL_VERSION: ${{ github.event.inputs.incremental-version }}
-      GITHUB_REPOSITORY_NAME: cipher-pol
+      MAVEN_SKIP_TEST: true
     secrets:
       MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
       MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
+  release:
+    name: Release
+    needs:
+    - build
+    uses: bayudwiyansatria/.github/.github/workflows/release-github.yaml@master
+    with:
+      GITHUB_REPOSITORY_NAME: ${{ github.repository }}
+      ENVIRONMENT: production
+      MAJOR_VERSION: ${{ github.event.inputs.major-version }}
+      MINOR_VERSION: ${{ github.event.inputs.minor-version }}
+      INCREMENTAL_VERSION: ${{ github.event.inputs.incremental-version }}
+      ARTIFACT_ASSETS: target
+      ARTIFACT_NAME: target
+      ARTIFACT_PATH: target
+      COVERAGE_ENABLED: false
+      COVERAGE_NAME: target
+      COVERAGE_PATH: target/site/${{ github.repository }}/coverage
+      DOCS_ENABLED: false
+      DOCS_NAME: target
+      DOCS_PATH: target/site/${{ github.repository }}/apidocs
+    secrets: inherit
+  release-pages:
+    name: Release
+    needs:
+    - release
+    uses: bayudwiyansatria/.github/.github/workflows/release-github-pages.yaml@master
+    with:
+      GITHUB_PAGES_URL: https://bayudwiyansatria.github.io/cipher-pol
+      ARTIFACT_NAME: target
+      ARTIFACT_PATH: target
+      ARTIFACT_ROOT: target/site/${{ github.repository }}
+    secrets: inherit
