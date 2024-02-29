@@ -1,8 +1,19 @@
 name: Release
 on:
-  release:
-    types:
-    - released
+  workflow_dispatch:
+    inputs:
+      major-version:
+        description: 'Major Version'
+        required: true
+        default: '1'
+      minor-version:
+        description: 'Minor Version'
+        required: true
+        default: '0'
+      incremental-version:
+        description: 'Incremental Version'
+        required: true
+        default: '0'
 env:
   versions: \${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.nextIncrementalVersion}-SNAPSHOT
 jobs:
@@ -14,6 +25,7 @@ jobs:
       MAJOR_VERSION: ${{ github.event.inputs.major-version }}
       MINOR_VERSION: ${{ github.event.inputs.minor-version }}
       INCREMENTAL_VERSION: ${{ github.event.inputs.incremental-version }}
+      GITHUB_REPOSITORY_NAME: cipher-pol
     secrets:
       MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
       MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
