@@ -2,8 +2,10 @@ package com.bayudwiyansatria.security.x509;
 
 import com.bayudwiyansatria.common.security.SerialNumberGenerator;
 import com.bayudwiyansatria.common.security.x509.KeyUsages;
+import com.bayudwiyansatria.security.utils.SecurityUtils;
 import java.security.cert.CertificateException;
 import java.time.ZonedDateTime;
+import java.util.Base64;
 import java.util.Date;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.X509v3CertificateBuilder;
@@ -20,6 +22,12 @@ public class CertificateBuilder {
     private final CertificateRequest certificateRequest;
     private final DistinguishedName issuerDistinguishedName;
     private final Signer signer;
+
+    public CertificateBuilder() {
+        this.certificateRequest = null;
+        this.issuerDistinguishedName = null;
+        this.signer = null;
+    }
 
     /**
      * Certificate Builder Constructor
@@ -70,6 +78,28 @@ public class CertificateBuilder {
      */
     public CertificateBuilder setKeyUsages(KeyUsages[] keyUsages) {
         return this;
+    }
+
+    /**
+     * Build Certificate from Bytes
+     *
+     * @param x509Certificate x509Certificate
+     * @return Certificate
+     * @since 1.0.2
+     */
+    public Certificate build(byte[] x509Certificate) {
+        return new Certificate(new SecurityUtils().generateCertificate(x509Certificate));
+    }
+
+    /**
+     * Build Certificate from Base64 Encoded
+     *
+     * @param x509Certificate X509Certificate
+     * @return Certificate
+     * @since 1.0.2
+     */
+    public Certificate build(String x509Certificate) {
+        return this.build(Base64.getDecoder().decode(x509Certificate));
     }
 
     /**

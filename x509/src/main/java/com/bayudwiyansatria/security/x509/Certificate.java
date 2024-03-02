@@ -33,8 +33,19 @@ public class Certificate extends CertificateAbstract<X509Certificate> {
      * @since 0.0.1
      */
     public Certificate(byte[] x509Certificate) {
-        super(new SecurityUtils().generateCertificate(x509Certificate));
-        this.x509Certificate = new SecurityUtils().generateCertificate(x509Certificate);
+        super(new CertificateBuilder().build(x509Certificate).x509Certificate);
+        this.x509Certificate = new CertificateBuilder().build(x509Certificate).x509Certificate;
+    }
+
+    /**
+     * Certificate Constructor
+     *
+     * @param x509Certificate ByteArray of X509Certificate
+     * @since 1.0.2
+     */
+    public Certificate(String x509Certificate) {
+        super(new CertificateBuilder().build(x509Certificate).x509Certificate);
+        this.x509Certificate = new CertificateBuilder().build(x509Certificate).x509Certificate;
     }
 
     /**

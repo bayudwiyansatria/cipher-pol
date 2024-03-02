@@ -38,7 +38,6 @@ jobs:
     - build
     uses: bayudwiyansatria/.github/.github/workflows/release-github.yaml@master
     with:
-      GITHUB_REPOSITORY_NAME: ${{ github.repository }}
       ENVIRONMENT: production
       MAJOR_VERSION: ${{ github.event.inputs.major-version }}
       MINOR_VERSION: ${{ github.event.inputs.minor-version }}
@@ -48,7 +47,7 @@ jobs:
       ARTIFACT_PATH: target
       COVERAGE_ENABLED: false
       COVERAGE_NAME: target
-      COVERAGE_PATH: target/site/${{ github.repository }}/coverage
+      COVERAGE_PATH: target/site/${{ github.event.repository.name }}/coverage
       DOCS_ENABLED: false
       DOCS_NAME: target
       DOCS_PATH: target/site/${{ github.repository }}/apidocs
@@ -62,5 +61,5 @@ jobs:
       GITHUB_PAGES_URL: https://bayudwiyansatria.github.io/cipher-pol
       ARTIFACT_NAME: target
       ARTIFACT_PATH: target
-      ARTIFACT_ROOT: target/site/${{ github.repository }}
+      ARTIFACT_ROOT: target/site/${{ github.event.repository.name }}
     secrets: inherit
